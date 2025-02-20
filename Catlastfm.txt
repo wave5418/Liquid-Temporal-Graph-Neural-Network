@@ -1,0 +1,675 @@
+INFO:root:********** Run 1 starts. **********
+INFO:root:configuration is Namespace(dataset_name='lastfm', batch_size=200, model_name='Liquid', gpu=0, num_neighbors=20, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=2000, time_feat_dim=100, structure_feat_dim=50, lamda=0.3, position_feat_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=200, channel_embedding_dim=50, max_input_sequence_length=64, learning_rate=0.0001, dropout=0.1, num_epochs=100, optimizer='Adam', weight_decay=0.0, patience=20, val_ratio=0.15, test_ratio=0.15, num_runs=5, test_interval_epochs=10, negative_sample_strategy='random', load_best_configs=False, device='cuda:0', seed=0, save_model_name='Liquid_seed0')
+INFO:root:model -> Sequential(
+  (0): Liquid(
+    (memory_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (edge_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (message_aggregator): MessageAggregator()
+    (memory_bank): MemoryBank(num_nodes=1981, memory_dim=172)
+    (memory_updater): CFCMemoryUpdater(
+      (memory_bank): MemoryBank(num_nodes=1981, memory_dim=172)
+      (memory_updater): MoE(
+        (mixer): Linear(in_features=788, out_features=616, bias=True)
+        (relu): ReLU(inplace=True)
+        (experts): ModuleList(
+          (0-2): 3 x rnnmodule(
+            (cell): GRUCell(616, 172)
+            (relu): ReLU()
+          )
+          (3-5): 3 x cfcmodule(
+            (cell): cfcbundle(
+              (rnn_cell): CfCCell(
+                (backbone): Sequential(
+                  (0): Linear(in_features=788, out_features=128, bias=True)
+                  (1): LeCun(
+                    (tanh): Tanh()
+                  )
+                )
+                (tanh): Tanh()
+                (sigmoid): Sigmoid()
+                (ff1): Linear(in_features=128, out_features=172, bias=True)
+                (ff2): Linear(in_features=128, out_features=172, bias=True)
+                (time_a): Linear(in_features=128, out_features=172, bias=True)
+                (time_b): Linear(in_features=128, out_features=172, bias=True)
+              )
+              (leaky_factor): Linear(in_features=616, out_features=172, bias=True)
+            )
+            (relu): ReLU()
+          )
+        )
+        (softplus): Softplus(beta=1.0, threshold=20.0)
+        (softmax): Softmax(dim=1)
+      )
+    )
+    (embedding_module): GraphAttentionEmbedding(
+      (time_encoder): TimeEncoder(
+        (w): Linear(in_features=1, out_features=100, bias=True)
+      )
+      (temporal_conv_layers): ModuleList(
+        (0-1): 2 x MultiHeadAttention(
+          (query_projection): Linear(in_features=272, out_features=272, bias=False)
+          (key_projection): Linear(in_features=444, out_features=272, bias=False)
+          (value_projection): Linear(in_features=444, out_features=272, bias=False)
+          (layer_norm): LayerNorm((272,), eps=1e-05, elementwise_affine=True)
+          (residual_fc): Linear(in_features=272, out_features=272, bias=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+      )
+      (merge_layers): ModuleList(
+        (0-1): 2 x MergeLayer(
+          (fc1): Linear(in_features=444, out_features=172, bias=True)
+          (fc2): Linear(in_features=172, out_features=172, bias=True)
+          (act): ReLU()
+        )
+      )
+      (neighbor_co_occurrence_encoder): NeighborCooccurrenceEncoder(
+        (neighbor_co_occurrence_encode_layer): Sequential(
+          (0): Linear(in_features=1, out_features=172, bias=True)
+          (1): ReLU()
+          (2): Linear(in_features=172, out_features=172, bias=True)
+        )
+      )
+      (structure_encoder): Linear(in_features=172, out_features=172, bias=True)
+      (relu): ReLU()
+    )
+    (neighbor_co_occurrence_encoder): NeighborCooccurrenceEncoder(
+      (neighbor_co_occurrence_encode_layer): Sequential(
+        (0): Linear(in_features=1, out_features=172, bias=True)
+        (1): ReLU()
+        (2): Linear(in_features=172, out_features=172, bias=True)
+      )
+    )
+    (structure_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (relu): ReLU()
+    (layer_norm_feat): LayerNorm((172,), eps=1e-05, elementwise_affine=True)
+    (layer_norm_structure): LayerNorm((172,), eps=1e-05, elementwise_affine=True)
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+INFO:root:model name: Liquid, #parameters: 15347204 B, 14987.50390625 KB, 14.636234283447266 MB.
+INFO:root:Epoch: 1, learning rate: 0.00019048270524664468, train loss: 0.5933
+INFO:root:train average_precision, 0.7643
+INFO:root:train roc_auc, 0.7459
+INFO:root:validate loss: 0.6106
+INFO:root:validate average_precision, 0.7664
+INFO:root:validate roc_auc, 0.7254
+INFO:root:new node validate loss: 0.6275
+INFO:root:new node validate average_precision, 0.7331
+INFO:root:new node validate roc_auc, 0.6684
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 2, learning rate: 0.0001637423989746843, train loss: 0.5700
+INFO:root:train average_precision, 0.7912
+INFO:root:train roc_auc, 0.7680
+INFO:root:validate loss: 0.5963
+INFO:root:validate average_precision, 0.7749
+INFO:root:validate roc_auc, 0.7433
+INFO:root:new node validate loss: 0.5837
+INFO:root:new node validate average_precision, 0.7997
+INFO:root:new node validate roc_auc, 0.7694
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 3, learning rate: 0.00012486898871626496, train loss: 0.5381
+INFO:root:train average_precision, 0.8191
+INFO:root:train roc_auc, 0.8029
+INFO:root:validate loss: 0.7076
+INFO:root:validate average_precision, 0.7843
+INFO:root:validate roc_auc, 0.7526
+INFO:root:new node validate loss: 0.6502
+INFO:root:new node validate average_precision, 0.7800
+INFO:root:new node validate roc_auc, 0.7467
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 4, learning rate: 8.126186854151751e-05, train loss: 0.5177
+INFO:root:train average_precision, 0.8273
+INFO:root:train roc_auc, 0.8132
+INFO:root:validate loss: 0.7032
+INFO:root:validate average_precision, 0.7872
+INFO:root:validate roc_auc, 0.7545
+INFO:root:new node validate loss: 0.6507
+INFO:root:new node validate average_precision, 0.7751
+INFO:root:new node validate roc_auc, 0.7370
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 5, learning rate: 4.122147477091807e-05, train loss: 0.4988
+INFO:root:train average_precision, 0.8356
+INFO:root:train roc_auc, 0.8281
+INFO:root:validate loss: 0.5819
+INFO:root:validate average_precision, 0.8047
+INFO:root:validate roc_auc, 0.7852
+INFO:root:new node validate loss: 0.5337
+INFO:root:new node validate average_precision, 0.8165
+INFO:root:new node validate roc_auc, 0.7984
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 6, learning rate: 1.2369331995618035e-05, train loss: 0.4906
+INFO:root:train average_precision, 0.8444
+INFO:root:train roc_auc, 0.8345
+INFO:root:validate loss: 0.6599
+INFO:root:validate average_precision, 0.7994
+INFO:root:validate roc_auc, 0.7753
+INFO:root:new node validate loss: 0.5857
+INFO:root:new node validate average_precision, 0.8068
+INFO:root:new node validate roc_auc, 0.7816
+INFO:root:Epoch: 7, learning rate: 1.9732715717396547e-07, train loss: 0.4793
+INFO:root:train average_precision, 0.8532
+INFO:root:train roc_auc, 0.8442
+INFO:root:validate loss: 0.6204
+INFO:root:validate average_precision, 0.8174
+INFO:root:validate roc_auc, 0.7978
+INFO:root:new node validate loss: 0.5592
+INFO:root:new node validate average_precision, 0.8246
+INFO:root:new node validate roc_auc, 0.8075
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 8, learning rate: 7.022351411175963e-06, train loss: 0.4687
+INFO:root:train average_precision, 0.8596
+INFO:root:train roc_auc, 0.8524
+INFO:root:validate loss: 0.5816
+INFO:root:validate average_precision, 0.8239
+INFO:root:validate roc_auc, 0.8081
+INFO:root:new node validate loss: 0.5132
+INFO:root:new node validate average_precision, 0.8372
+INFO:root:new node validate roc_auc, 0.8227
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 9, learning rate: 3.154528940722586e-05, train loss: 0.4661
+INFO:root:train average_precision, 0.8610
+INFO:root:train roc_auc, 0.8544
+INFO:root:validate loss: 0.5830
+INFO:root:validate average_precision, 0.8261
+INFO:root:validate roc_auc, 0.8116
+INFO:root:new node validate loss: 0.5140
+INFO:root:new node validate average_precision, 0.8396
+INFO:root:new node validate roc_auc, 0.8270
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 10, learning rate: 6.909830056243109e-05, train loss: 0.4635
+INFO:root:train average_precision, 0.8615
+INFO:root:train roc_auc, 0.8557
+INFO:root:validate loss: 0.6036
+INFO:root:validate average_precision, 0.8198
+INFO:root:validate roc_auc, 0.8057
+INFO:root:new node validate loss: 0.5760
+INFO:root:new node validate average_precision, 0.8071
+INFO:root:new node validate roc_auc, 0.7881
+INFO:root:test loss: 0.7255
+INFO:root:test average_precision, 0.8132
+INFO:root:test roc_auc, 0.7943
+INFO:root:new node test loss: 0.6801
+INFO:root:new node test average_precision, 0.8377
+INFO:root:new node test roc_auc, 0.8175
+INFO:root:Epoch: 11, learning rate: 0.00011253332335744732, train loss: 0.4566
+INFO:root:train average_precision, 0.8669
+INFO:root:train roc_auc, 0.8619
+INFO:root:validate loss: 0.6160
+INFO:root:validate average_precision, 0.8268
+INFO:root:validate roc_auc, 0.8119
+INFO:root:new node validate loss: 0.5758
+INFO:root:new node validate average_precision, 0.8264
+INFO:root:new node validate roc_auc, 0.8105
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 12, learning rate: 0.00015358267949860992, train loss: 0.4519
+INFO:root:train average_precision, 0.8709
+INFO:root:train roc_auc, 0.8661
+INFO:root:validate loss: 0.5609
+INFO:root:validate average_precision, 0.8271
+INFO:root:validate roc_auc, 0.8121
+INFO:root:new node validate loss: 0.5756
+INFO:root:new node validate average_precision, 0.8312
+INFO:root:new node validate roc_auc, 0.8162
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 13, learning rate: 0.00018443279255298445, train loss: 0.4483
+INFO:root:train average_precision, 0.8734
+INFO:root:train roc_auc, 0.8687
+INFO:root:validate loss: 0.5742
+INFO:root:validate average_precision, 0.8358
+INFO:root:validate roc_auc, 0.8247
+INFO:root:new node validate loss: 0.5587
+INFO:root:new node validate average_precision, 0.8471
+INFO:root:new node validate roc_auc, 0.8338
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 14, learning rate: 0.00019921147013068376, train loss: 0.4507
+INFO:root:train average_precision, 0.8716
+INFO:root:train roc_auc, 0.8669
+INFO:root:validate loss: 0.6024
+INFO:root:validate average_precision, 0.8301
+INFO:root:validate roc_auc, 0.8156
+INFO:root:new node validate loss: 0.5269
+INFO:root:new node validate average_precision, 0.8464
+INFO:root:new node validate roc_auc, 0.8312
+INFO:root:Epoch: 15, learning rate: 0.00019510565163078668, train loss: 0.4722
+INFO:root:train average_precision, 0.8576
+INFO:root:train roc_auc, 0.8493
+INFO:root:validate loss: 0.5931
+INFO:root:validate average_precision, 0.8247
+INFO:root:validate roc_auc, 0.8084
+INFO:root:new node validate loss: 0.5303
+INFO:root:new node validate average_precision, 0.8221
+INFO:root:new node validate roc_auc, 0.8040
+INFO:root:Epoch: 16, learning rate: 0.00017289686274252588, train loss: 0.4440
+INFO:root:train average_precision, 0.8761
+INFO:root:train roc_auc, 0.8720
+INFO:root:validate loss: 0.5029
+INFO:root:validate average_precision, 0.8468
+INFO:root:validate roc_auc, 0.8379
+INFO:root:new node validate loss: 0.4982
+INFO:root:new node validate average_precision, 0.8484
+INFO:root:new node validate roc_auc, 0.8342
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 17, learning rate: 0.00013681245526820615, train loss: 0.4395
+INFO:root:train average_precision, 0.8784
+INFO:root:train roc_auc, 0.8747
+INFO:root:validate loss: 0.5992
+INFO:root:validate average_precision, 0.8271
+INFO:root:validate roc_auc, 0.8135
+INFO:root:new node validate loss: 0.5069
+INFO:root:new node validate average_precision, 0.8415
+INFO:root:new node validate roc_auc, 0.8279
+INFO:root:Epoch: 18, learning rate: 9.372094804784221e-05, train loss: 0.4428
+INFO:root:train average_precision, 0.8765
+INFO:root:train roc_auc, 0.8724
+INFO:root:validate loss: 0.6479
+INFO:root:validate average_precision, 0.8222
+INFO:root:validate roc_auc, 0.8053
+INFO:root:new node validate loss: 0.5677
+INFO:root:new node validate average_precision, 0.8295
+INFO:root:new node validate roc_auc, 0.8126
+INFO:root:Epoch: 19, learning rate: 5.182463259081823e-05, train loss: 0.4426
+INFO:root:train average_precision, 0.8774
+INFO:root:train roc_auc, 0.8727
+INFO:root:validate loss: 0.6043
+INFO:root:validate average_precision, 0.8321
+INFO:root:validate roc_auc, 0.8183
+INFO:root:new node validate loss: 0.6140
+INFO:root:new node validate average_precision, 0.8191
+INFO:root:new node validate roc_auc, 0.7982
+INFO:root:Epoch: 20, learning rate: 1.9098300562771536e-05, train loss: 0.4462
+INFO:root:train average_precision, 0.8747
+INFO:root:train roc_auc, 0.8698
+INFO:root:validate loss: 0.5319
+INFO:root:validate average_precision, 0.8393
+INFO:root:validate roc_auc, 0.8274
+INFO:root:new node validate loss: 0.6318
+INFO:root:new node validate average_precision, 0.8301
+INFO:root:new node validate roc_auc, 0.8096
+INFO:root:test loss: 0.6660
+INFO:root:test average_precision, 0.8384
+INFO:root:test roc_auc, 0.8250
+INFO:root:new node test loss: 0.6134
+INFO:root:new node test average_precision, 0.8644
+INFO:root:new node test roc_auc, 0.8513
+INFO:root:Epoch: 21, learning rate: 1.771274927147198e-06, train loss: 0.4370
+INFO:root:train average_precision, 0.8805
+INFO:root:train roc_auc, 0.8765
+INFO:root:validate loss: 0.4982
+INFO:root:validate average_precision, 0.8542
+INFO:root:validate roc_auc, 0.8456
+INFO:root:new node validate loss: 0.5456
+INFO:root:new node validate average_precision, 0.8483
+INFO:root:new node validate roc_auc, 0.8345
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 22, learning rate: 3.141683887115609e-06, train loss: 0.4367
+INFO:root:train average_precision, 0.8801
+INFO:root:train roc_auc, 0.8765
+INFO:root:validate loss: 0.5942
+INFO:root:validate average_precision, 0.8381
+INFO:root:validate roc_auc, 0.8267
+INFO:root:new node validate loss: 0.5835
+INFO:root:new node validate average_precision, 0.8538
+INFO:root:new node validate roc_auc, 0.8439
+INFO:root:Epoch: 23, learning rate: 2.294867572282414e-05, train loss: 0.4308
+INFO:root:train average_precision, 0.8846
+INFO:root:train roc_auc, 0.8813
+INFO:root:validate loss: 0.5840
+INFO:root:validate average_precision, 0.8410
+INFO:root:validate roc_auc, 0.8297
+INFO:root:new node validate loss: 0.5050
+INFO:root:new node validate average_precision, 0.8669
+INFO:root:new node validate roc_auc, 0.8587
+INFO:root:Epoch: 24, learning rate: 5.742207084420902e-05, train loss: 0.4313
+INFO:root:train average_precision, 0.8841
+INFO:root:train roc_auc, 0.8805
+INFO:root:validate loss: 0.5772
+INFO:root:validate average_precision, 0.8428
+INFO:root:validate roc_auc, 0.8332
+INFO:root:new node validate loss: 0.5181
+INFO:root:new node validate average_precision, 0.8438
+INFO:root:new node validate roc_auc, 0.8302
+INFO:root:Epoch: 25, learning rate: 0.00010000000000084139, train loss: 0.4277
+INFO:root:train average_precision, 0.8867
+INFO:root:train roc_auc, 0.8831
+INFO:root:validate loss: 0.5805
+INFO:root:validate average_precision, 0.8345
+INFO:root:validate roc_auc, 0.8248
+INFO:root:new node validate loss: 0.5053
+INFO:root:new node validate average_precision, 0.8500
+INFO:root:new node validate roc_auc, 0.8380
+INFO:root:Epoch: 26, learning rate: 0.00014257792915718968, train loss: 0.4245
+INFO:root:train average_precision, 0.8877
+INFO:root:train roc_auc, 0.8852
+INFO:root:validate loss: 0.5475
+INFO:root:validate average_precision, 0.8461
+INFO:root:validate roc_auc, 0.8361
+INFO:root:new node validate loss: 0.5434
+INFO:root:new node validate average_precision, 0.8412
+INFO:root:new node validate roc_auc, 0.8269
+INFO:root:Epoch: 27, learning rate: 0.0001770513242827351, train loss: 0.4288
+INFO:root:train average_precision, 0.8849
+INFO:root:train roc_auc, 0.8819
+INFO:root:validate loss: 0.5825
+INFO:root:validate average_precision, 0.8453
+INFO:root:validate roc_auc, 0.8351
+INFO:root:new node validate loss: 0.4821
+INFO:root:new node validate average_precision, 0.8623
+INFO:root:new node validate roc_auc, 0.8520
+INFO:root:Epoch: 28, learning rate: 0.00019685831611781495, train loss: 0.4227
+INFO:root:train average_precision, 0.8889
+INFO:root:train roc_auc, 0.8862
+INFO:root:validate loss: 0.5657
+INFO:root:validate average_precision, 0.8422
+INFO:root:validate roc_auc, 0.8303
+INFO:root:new node validate loss: 0.4947
+INFO:root:new node validate average_precision, 0.8592
+INFO:root:new node validate roc_auc, 0.8459
+INFO:root:Epoch: 29, learning rate: 0.00019822872507701454, train loss: 0.4253
+INFO:root:train average_precision, 0.8871
+INFO:root:train roc_auc, 0.8844
+INFO:root:validate loss: 0.5742
+INFO:root:validate average_precision, 0.8376
+INFO:root:validate roc_auc, 0.8260
+INFO:root:new node validate loss: 0.5638
+INFO:root:new node validate average_precision, 0.8068
+INFO:root:new node validate roc_auc, 0.7842
+INFO:root:Epoch: 30, learning rate: 0.0001809016994405002, train loss: 0.4314
+INFO:root:train average_precision, 0.8830
+INFO:root:train roc_auc, 0.8798
+INFO:root:validate loss: 0.5006
+INFO:root:validate average_precision, 0.8486
+INFO:root:validate roc_auc, 0.8407
+INFO:root:new node validate loss: 0.4778
+INFO:root:new node validate average_precision, 0.8683
+INFO:root:new node validate roc_auc, 0.8562
+INFO:root:test loss: 0.6370
+INFO:root:test average_precision, 0.8498
+INFO:root:test roc_auc, 0.8379
+INFO:root:new node test loss: 0.5284
+INFO:root:new node test average_precision, 0.8903
+INFO:root:new node test roc_auc, 0.8816
+INFO:root:Epoch: 31, learning rate: 0.00014817536740773416, train loss: 0.4356
+INFO:root:train average_precision, 0.8815
+INFO:root:train roc_auc, 0.8773
+INFO:root:validate loss: 0.6432
+INFO:root:validate average_precision, 0.8358
+INFO:root:validate roc_auc, 0.8241
+INFO:root:new node validate loss: 0.5710
+INFO:root:new node validate average_precision, 0.8461
+INFO:root:new node validate roc_auc, 0.8327
+INFO:root:Epoch: 32, learning rate: 0.0001062790519537801, train loss: 0.4276
+INFO:root:train average_precision, 0.8857
+INFO:root:train roc_auc, 0.8827
+INFO:root:validate loss: 0.5824
+INFO:root:validate average_precision, 0.8450
+INFO:root:validate roc_auc, 0.8358
+INFO:root:new node validate loss: 0.4866
+INFO:root:new node validate average_precision, 0.8691
+INFO:root:new node validate roc_auc, 0.8587
+INFO:root:Epoch: 33, learning rate: 6.318754473176239e-05, train loss: 0.4336
+INFO:root:train average_precision, 0.8820
+INFO:root:train roc_auc, 0.8786
+INFO:root:validate loss: 0.5675
+INFO:root:validate average_precision, 0.8435
+INFO:root:validate roc_auc, 0.8340
+INFO:root:new node validate loss: 0.4951
+INFO:root:new node validate average_precision, 0.8690
+INFO:root:new node validate roc_auc, 0.8594
+INFO:root:Epoch: 34, learning rate: 2.7103137257869077e-05, train loss: 0.4348
+INFO:root:train average_precision, 0.8820
+INFO:root:train roc_auc, 0.8779
+INFO:root:validate loss: 0.5828
+INFO:root:validate average_precision, 0.8389
+INFO:root:validate roc_auc, 0.8265
+INFO:root:new node validate loss: 0.5323
+INFO:root:new node validate average_precision, 0.8454
+INFO:root:new node validate roc_auc, 0.8330
+INFO:root:Epoch: 35, learning rate: 4.894348370472612e-06, train loss: 0.4287
+INFO:root:train average_precision, 0.8856
+INFO:root:train roc_auc, 0.8820
+INFO:root:validate loss: 0.5558
+INFO:root:validate average_precision, 0.8430
+INFO:root:validate roc_auc, 0.8308
+INFO:root:new node validate loss: 0.6105
+INFO:root:new node validate average_precision, 0.8413
+INFO:root:new node validate roc_auc, 0.8253
+INFO:root:Epoch: 36, learning rate: 7.885298685822976e-07, train loss: 0.4356
+INFO:root:train average_precision, 0.8806
+INFO:root:train roc_auc, 0.8766
+INFO:root:validate loss: 0.5396
+INFO:root:validate average_precision, 0.8512
+INFO:root:validate roc_auc, 0.8420
+INFO:root:new node validate loss: 0.4825
+INFO:root:new node validate average_precision, 0.8683
+INFO:root:new node validate roc_auc, 0.8560
+INFO:root:Epoch: 37, learning rate: 1.556720744984795e-05, train loss: 0.4258
+INFO:root:train average_precision, 0.8867
+INFO:root:train roc_auc, 0.8841
+INFO:root:validate loss: 0.5478
+INFO:root:validate average_precision, 0.8540
+INFO:root:validate roc_auc, 0.8446
+INFO:root:new node validate loss: 0.5190
+INFO:root:new node validate average_precision, 0.8609
+INFO:root:new node validate roc_auc, 0.8483
+INFO:root:Epoch: 38, learning rate: 4.641732050196246e-05, train loss: 0.4211
+INFO:root:train average_precision, 0.8894
+INFO:root:train roc_auc, 0.8869
+INFO:root:validate loss: 0.5225
+INFO:root:validate average_precision, 0.8535
+INFO:root:validate roc_auc, 0.8459
+INFO:root:new node validate loss: 0.5042
+INFO:root:new node validate average_precision, 0.8674
+INFO:root:new node validate roc_auc, 0.8562
+INFO:root:Epoch: 39, learning rate: 8.746667664309214e-05, train loss: 0.4187
+INFO:root:train average_precision, 0.8916
+INFO:root:train roc_auc, 0.8888
+INFO:root:validate loss: 0.5947
+INFO:root:validate average_precision, 0.8495
+INFO:root:validate roc_auc, 0.8399
+INFO:root:new node validate loss: 0.5296
+INFO:root:new node validate average_precision, 0.8686
+INFO:root:new node validate roc_auc, 0.8600
+INFO:root:Epoch: 40, learning rate: 0.0001309016994362129, train loss: 0.4271
+INFO:root:train average_precision, 0.8871
+INFO:root:train roc_auc, 0.8833
+INFO:root:validate loss: 0.6951
+INFO:root:validate average_precision, 0.8235
+INFO:root:validate roc_auc, 0.8046
+INFO:root:new node validate loss: 0.6319
+INFO:root:new node validate average_precision, 0.8387
+INFO:root:new node validate roc_auc, 0.8228
+INFO:root:test loss: 0.8197
+INFO:root:test average_precision, 0.8222
+INFO:root:test roc_auc, 0.7976
+INFO:root:new node test loss: 0.7850
+INFO:root:new node test average_precision, 0.8535
+INFO:root:new node test roc_auc, 0.8336
+INFO:root:Epoch: 41, learning rate: 0.000168454710590426, train loss: 0.4262
+INFO:root:train average_precision, 0.8866
+INFO:root:train roc_auc, 0.8836
+INFO:root:validate loss: 0.5621
+INFO:root:validate average_precision, 0.8497
+INFO:root:validate roc_auc, 0.8398
+INFO:root:new node validate loss: 0.5328
+INFO:root:new node validate average_precision, 0.8554
+INFO:root:new node validate roc_auc, 0.8423
+INFO:root:load model ./saved_models/Liquid/lastfm/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:get final performance on dataset lastfm...
+INFO:root:test loss: 0.6287
+INFO:root:test average_precision, 0.8493
+INFO:root:test roc_auc, 0.8382
+INFO:root:new node test loss: 0.5542
+INFO:root:new node test average_precision, 0.8799
+INFO:root:new node test roc_auc, 0.8732
+INFO:root:Run 1 cost 229293.31 seconds.
+INFO:root:********** Run 2 starts. **********
+INFO:root:configuration is Namespace(dataset_name='lastfm', batch_size=200, model_name='Liquid', gpu=0, num_neighbors=20, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=2000, time_feat_dim=100, structure_feat_dim=50, lamda=0.3, position_feat_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=200, channel_embedding_dim=50, max_input_sequence_length=64, learning_rate=0.0001, dropout=0.1, num_epochs=100, optimizer='Adam', weight_decay=0.0, patience=20, val_ratio=0.15, test_ratio=0.15, num_runs=5, test_interval_epochs=10, negative_sample_strategy='random', load_best_configs=False, device='cuda:0', seed=1, save_model_name='Liquid_seed1')
+INFO:root:model -> Sequential(
+  (0): Liquid(
+    (memory_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (edge_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (message_aggregator): MessageAggregator()
+    (memory_bank): MemoryBank(num_nodes=1981, memory_dim=172)
+    (memory_updater): CFCMemoryUpdater(
+      (memory_bank): MemoryBank(num_nodes=1981, memory_dim=172)
+      (memory_updater): MoE(
+        (mixer): Linear(in_features=788, out_features=616, bias=True)
+        (relu): ReLU(inplace=True)
+        (experts): ModuleList(
+          (0-2): 3 x rnnmodule(
+            (cell): GRUCell(616, 172)
+            (relu): ReLU()
+          )
+          (3-5): 3 x cfcmodule(
+            (cell): cfcbundle(
+              (rnn_cell): CfCCell(
+                (backbone): Sequential(
+                  (0): Linear(in_features=788, out_features=128, bias=True)
+                  (1): LeCun(
+                    (tanh): Tanh()
+                  )
+                )
+                (tanh): Tanh()
+                (sigmoid): Sigmoid()
+                (ff1): Linear(in_features=128, out_features=172, bias=True)
+                (ff2): Linear(in_features=128, out_features=172, bias=True)
+                (time_a): Linear(in_features=128, out_features=172, bias=True)
+                (time_b): Linear(in_features=128, out_features=172, bias=True)
+              )
+              (leaky_factor): Linear(in_features=616, out_features=172, bias=True)
+            )
+            (relu): ReLU()
+          )
+        )
+        (softplus): Softplus(beta=1.0, threshold=20.0)
+        (softmax): Softmax(dim=1)
+      )
+    )
+    (embedding_module): GraphAttentionEmbedding(
+      (time_encoder): TimeEncoder(
+        (w): Linear(in_features=1, out_features=100, bias=True)
+      )
+      (temporal_conv_layers): ModuleList(
+        (0-1): 2 x MultiHeadAttention(
+          (query_projection): Linear(in_features=272, out_features=272, bias=False)
+          (key_projection): Linear(in_features=444, out_features=272, bias=False)
+          (value_projection): Linear(in_features=444, out_features=272, bias=False)
+          (layer_norm): LayerNorm((272,), eps=1e-05, elementwise_affine=True)
+          (residual_fc): Linear(in_features=272, out_features=272, bias=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+      )
+      (merge_layers): ModuleList(
+        (0-1): 2 x MergeLayer(
+          (fc1): Linear(in_features=444, out_features=172, bias=True)
+          (fc2): Linear(in_features=172, out_features=172, bias=True)
+          (act): ReLU()
+        )
+      )
+      (neighbor_co_occurrence_encoder): NeighborCooccurrenceEncoder(
+        (neighbor_co_occurrence_encode_layer): Sequential(
+          (0): Linear(in_features=1, out_features=172, bias=True)
+          (1): ReLU()
+          (2): Linear(in_features=172, out_features=172, bias=True)
+        )
+      )
+      (structure_encoder): Linear(in_features=172, out_features=172, bias=True)
+      (relu): ReLU()
+    )
+    (neighbor_co_occurrence_encoder): NeighborCooccurrenceEncoder(
+      (neighbor_co_occurrence_encode_layer): Sequential(
+        (0): Linear(in_features=1, out_features=172, bias=True)
+        (1): ReLU()
+        (2): Linear(in_features=172, out_features=172, bias=True)
+      )
+    )
+    (structure_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (relu): ReLU()
+    (layer_norm_feat): LayerNorm((172,), eps=1e-05, elementwise_affine=True)
+    (layer_norm_structure): LayerNorm((172,), eps=1e-05, elementwise_affine=True)
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+INFO:root:model name: Liquid, #parameters: 15347204 B, 14987.50390625 KB, 14.636234283447266 MB.
+INFO:root:Epoch: 1, learning rate: 0.00019048270524664468, train loss: 0.5994
+INFO:root:train average_precision, 0.7550
+INFO:root:train roc_auc, 0.7416
+INFO:root:validate loss: 0.6120
+INFO:root:validate average_precision, 0.7480
+INFO:root:validate roc_auc, 0.7091
+INFO:root:new node validate loss: 0.6199
+INFO:root:new node validate average_precision, 0.7342
+INFO:root:new node validate roc_auc, 0.6832
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed1/Liquid_seed1.pkl
+INFO:root:Epoch: 2, learning rate: 0.0001637423989746843, train loss: 0.5775
+INFO:root:train average_precision, 0.7841
+INFO:root:train roc_auc, 0.7586
+INFO:root:validate loss: 0.6031
+INFO:root:validate average_precision, 0.7552
+INFO:root:validate roc_auc, 0.7147
+INFO:root:new node validate loss: 0.5905
+INFO:root:new node validate average_precision, 0.7723
+INFO:root:new node validate roc_auc, 0.7321
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed1/Liquid_seed1.pkl
+INFO:root:Epoch: 3, learning rate: 0.00012486898871626496, train loss: 0.5685
+INFO:root:train average_precision, 0.7994
+INFO:root:train roc_auc, 0.7684
+INFO:root:validate loss: 0.5954
+INFO:root:validate average_precision, 0.7770
+INFO:root:validate roc_auc, 0.7407
+INFO:root:new node validate loss: 0.5854
+INFO:root:new node validate average_precision, 0.7842
+INFO:root:new node validate roc_auc, 0.7466
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed1/Liquid_seed1.pkl
+INFO:root:Epoch: 4, learning rate: 8.126186854151751e-05, train loss: 0.5540
+INFO:root:train average_precision, 0.8085
+INFO:root:train roc_auc, 0.7810
+INFO:root:validate loss: 0.5841
+INFO:root:validate average_precision, 0.7846
+INFO:root:validate roc_auc, 0.7489
+INFO:root:new node validate loss: 0.5740
+INFO:root:new node validate average_precision, 0.7909
+INFO:root:new node validate roc_auc, 0.7539
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed1/Liquid_seed1.pkl
+INFO:root:Epoch: 5, learning rate: 4.122147477091807e-05, train loss: 0.5535
+INFO:root:train average_precision, 0.8105
+INFO:root:train roc_auc, 0.7823
+INFO:root:validate loss: 0.5828
+INFO:root:validate average_precision, 0.7842
+INFO:root:validate roc_auc, 0.7502
+INFO:root:new node validate loss: 0.5706
+INFO:root:new node validate average_precision, 0.7920
+INFO:root:new node validate roc_auc, 0.7562
+INFO:root:Epoch: 6, learning rate: 1.2369331995618035e-05, train loss: 0.5458
+INFO:root:train average_precision, 0.8163
+INFO:root:train roc_auc, 0.7904
+INFO:root:validate loss: 0.6510
+INFO:root:validate average_precision, 0.7946
+INFO:root:validate roc_auc, 0.7666
+INFO:root:new node validate loss: 0.5547
+INFO:root:new node validate average_precision, 0.8092
+INFO:root:new node validate roc_auc, 0.7876
+INFO:root:save model ./saved_models/Liquid/lastfm/Liquid_seed1/Liquid_seed1.pkl
+INFO:root:Epoch: 7, learning rate: 1.9732715717396547e-07, train loss: 0.5115
+INFO:root:train average_precision, 0.8304
+INFO:root:train roc_auc, 0.8162
+INFO:root:validate loss: 0.7119
+INFO:root:validate average_precision, 0.7902
+INFO:root:validate roc_auc, 0.7605
+INFO:root:new node validate loss: 0.5280
+INFO:root:new node validate average_precision, 0.8240
+INFO:root:new node validate roc_auc, 0.8047

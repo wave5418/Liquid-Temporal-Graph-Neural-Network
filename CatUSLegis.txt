@@ -1,0 +1,136 @@
+INFO:root:********** Run 1 starts. **********
+INFO:root:configuration is Namespace(dataset_name='USLegis', batch_size=200, model_name='Liquid', gpu=0, num_neighbors=50, sample_neighbor_strategy='recent', time_scaling_factor=1e-06, num_walk_heads=8, num_heads=2, num_layers=2, walk_length=1, time_gap=2000, time_feat_dim=100, structure_feat_dim=50, lamda=0.2, position_feat_dim=172, edge_bank_memory_mode='unlimited_memory', time_window_mode='fixed_proportion', patch_size=200, channel_embedding_dim=50, max_input_sequence_length=128, learning_rate=0.0001, dropout=0.1, num_epochs=100, optimizer='Adam', weight_decay=0.0, patience=20, val_ratio=0.15, test_ratio=0.15, num_runs=5, test_interval_epochs=10, negative_sample_strategy='random', load_best_configs=False, device='cuda:0', seed=0, save_model_name='Liquid_seed0')
+INFO:root:model -> Sequential(
+  (0): Liquid(
+    (memory_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (edge_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (time_encoder): TimeEncoder(
+      (w): Linear(in_features=1, out_features=100, bias=True)
+    )
+    (message_aggregator): MessageAggregator()
+    (memory_bank): MemoryBank(num_nodes=226, memory_dim=172)
+    (memory_updater): CFCMemoryUpdater(
+      (memory_bank): MemoryBank(num_nodes=226, memory_dim=172)
+      (memory_updater): MoE(
+        (mixer): Linear(in_features=788, out_features=616, bias=True)
+        (relu): ReLU(inplace=True)
+        (experts): ModuleList(
+          (0-2): 3 x rnnmodule(
+            (cell): GRUCell(616, 172)
+            (relu): ReLU()
+          )
+          (3-5): 3 x cfcmodule(
+            (cell): cfcbundle(
+              (rnn_cell): CfCCell(
+                (backbone): Sequential(
+                  (0): Linear(in_features=788, out_features=128, bias=True)
+                  (1): LeCun(
+                    (tanh): Tanh()
+                  )
+                )
+                (tanh): Tanh()
+                (sigmoid): Sigmoid()
+                (ff1): Linear(in_features=128, out_features=172, bias=True)
+                (ff2): Linear(in_features=128, out_features=172, bias=True)
+                (time_a): Linear(in_features=128, out_features=172, bias=True)
+                (time_b): Linear(in_features=128, out_features=172, bias=True)
+              )
+              (leaky_factor): Linear(in_features=616, out_features=172, bias=True)
+            )
+            (relu): ReLU()
+          )
+        )
+        (softplus): Softplus(beta=1.0, threshold=20.0)
+        (softmax): Softmax(dim=1)
+      )
+    )
+    (embedding_module): GraphAttentionEmbedding(
+      (time_encoder): TimeEncoder(
+        (w): Linear(in_features=1, out_features=100, bias=True)
+      )
+      (temporal_conv_layers): ModuleList(
+        (0-1): 2 x MultiHeadAttention(
+          (query_projection): Linear(in_features=272, out_features=272, bias=False)
+          (key_projection): Linear(in_features=444, out_features=272, bias=False)
+          (value_projection): Linear(in_features=444, out_features=272, bias=False)
+          (layer_norm): LayerNorm((272,), eps=1e-05, elementwise_affine=True)
+          (residual_fc): Linear(in_features=272, out_features=272, bias=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+      )
+      (merge_layers): ModuleList(
+        (0-1): 2 x MergeLayer(
+          (fc1): Linear(in_features=444, out_features=172, bias=True)
+          (fc2): Linear(in_features=172, out_features=172, bias=True)
+          (act): ReLU()
+        )
+      )
+      (neighbor_co_occurrence_encoder): NeighborCooccurrenceEncoder(
+        (neighbor_co_occurrence_encode_layer): Sequential(
+          (0): Linear(in_features=1, out_features=172, bias=True)
+          (1): ReLU()
+          (2): Linear(in_features=172, out_features=172, bias=True)
+        )
+      )
+      (structure_encoder): Linear(in_features=172, out_features=172, bias=True)
+      (relu): ReLU()
+    )
+    (neighbor_co_occurrence_encoder): NeighborCooccurrenceEncoder(
+      (neighbor_co_occurrence_encode_layer): Sequential(
+        (0): Linear(in_features=1, out_features=172, bias=True)
+        (1): ReLU()
+        (2): Linear(in_features=172, out_features=172, bias=True)
+      )
+    )
+    (structure_encoder): Linear(in_features=172, out_features=172, bias=True)
+    (relu): ReLU()
+    (node_layer_norm): LayerNorm((172,), eps=1e-05, elementwise_affine=True)
+    (stru_layer_norm): LayerNorm((172,), eps=1e-05, elementwise_affine=True)
+    (proj1): Linear(in_features=344, out_features=172, bias=True)
+    (proj2): Linear(in_features=344, out_features=172, bias=True)
+  )
+  (1): MergeLayer(
+    (fc1): Linear(in_features=344, out_features=172, bias=True)
+    (fc2): Linear(in_features=172, out_features=1, bias=True)
+    (act): ReLU()
+  )
+)
+INFO:root:model name: Liquid, #parameters: 15821924 B, 15451.09765625 KB, 15.08896255493164 MB.
+INFO:root:Epoch: 1, learning rate: 0.00016613118653236524, train loss: 2.9578
+INFO:root:train average_precision, 0.6285
+INFO:root:train roc_auc, 0.6735
+INFO:root:validate loss: 2.9507
+INFO:root:validate average_precision, 0.6637
+INFO:root:validate roc_auc, 0.6925
+INFO:root:new node validate loss: 2.9604
+INFO:root:new node validate average_precision, 0.4798
+INFO:root:new node validate roc_auc, 0.4665
+INFO:root:save model ./saved_models/Liquid/USLegis/Liquid_seed0/Liquid_seed0.pkl
+INFO:root:Epoch: 2, learning rate: 8.746667664356936e-05, train loss: 2.9418
+INFO:root:train average_precision, 0.6264
+INFO:root:train roc_auc, 0.6991
+INFO:root:validate loss: 2.9248
+INFO:root:validate average_precision, 0.6163
+INFO:root:validate roc_auc, 0.6922
+INFO:root:new node validate loss: 2.9784
+INFO:root:new node validate average_precision, 0.5797
+INFO:root:new node validate roc_auc, 0.5734
+INFO:root:Epoch: 3, learning rate: 1.7291942572543902e-05, train loss: 2.9357
+INFO:root:train average_precision, 0.6358
+INFO:root:train roc_auc, 0.7129
+INFO:root:validate loss: 2.9214
+INFO:root:validate average_precision, 0.5921
+INFO:root:validate roc_auc, 0.6687
+INFO:root:new node validate loss: 2.9625
+INFO:root:new node validate average_precision, 0.4999
+INFO:root:new node validate roc_auc, 0.5257
+INFO:root:Epoch: 4, learning rate: 3.1416838871369568e-06, train loss: 2.9238
+INFO:root:train average_precision, 0.6661
+INFO:root:train roc_auc, 0.7440
+INFO:root:validate loss: 2.8911
+INFO:root:validate average_precision, 0.7020
+INFO:root:validate roc_auc, 0.7765
+INFO:root:new node validate loss: 2.9593
+INFO:root:new node validate average_precision, 0.4982
+INFO:root:new node validate roc_auc, 0.5043
+INFO:root:save model ./saved_models/Liquid/USLegis/Liquid_seed0/Liquid_seed0.pkl

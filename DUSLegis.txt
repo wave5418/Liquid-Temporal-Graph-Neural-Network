@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/lhw/DyGLib/DyGLib/train_link_prediction.py", line 19, in <module>
+    from models.Liquid import Liquid
+  File "/home/lhw/DyGLib/DyGLib/models/Liquid.py", line 140
+    num_neighbors=num_neighbors
+                  ^^^^^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
